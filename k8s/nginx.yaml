@@ -1,58 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: django
+  name: nginx
 spec:
   replicas: 1
+
   selector:
     matchLabels:
-      app: django
+      app: nginx
 
   template:
     metadata:
       labels:
-        app: django
+        app: nginx
 
     spec:
       containers:
-        - name: django
-          image: notes-app:latest
+        - name: nginx
+          image: notes-nginx:latest
           imagePullPolicy: Never
 
           ports:
-            - containerPort: 8000
-
-          env:
-            - name: DB_HOST
-              value: "mysql"
-
-            - name: DB_PORT
-              value: "3306"
-
-            - name: DB_NAME
-              value: "test_db"
-
-            - name: DB_USER
-              value: "root"
-
-            - name: DB_PASSWORD
-              value: "root"
-
-          command:
-            - sh
-            - -c
-            - |
-              python manage.py migrate --noinput
-              gunicorn notesapp.wsgi --bind 0.0.0.0:8000
+            - containerPort: 80
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: django
+  name: nginx
 spec:
+  type: ClusterIP
+
   selector:
-    app: django
+    app: nginx
+
   ports:
-    - port: 8000
-      targetPort: 8000
+    - port: 80
+      targetPort: 80
