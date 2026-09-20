@@ -1,0 +1,36 @@
+django:
+  replicas: 1
+  image: notes-app:latest
+  imagePullPolicy: Never
+
+  service:
+    port: 8000
+    targetPort: 8000
+
+  database:
+    host: mysql
+    port: "3306"
+    name: test_db
+    user: root
+    password: root
+
+mysql:
+  replicas: 1
+  image: mysql:8.0
+
+  service:
+    port: 3306
+    targetPort: 3306
+
+  rootPassword: root
+  database: test_db
+
+nginx:
+  replicas: 1
+  image: notes-nginx:latest
+  imagePullPolicy: Never
+
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 80
